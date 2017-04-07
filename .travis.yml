@@ -1,0 +1,56 @@
+language: c
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - openssl
+      - libzmq3
+      - libzmq3-dev
+
+env:
+  global:
+    - LUAROCKS=2.3.0
+  matrix:
+    - LUA=lua5.1
+    - LUA=lua5.2
+    - LUA=lua5.3
+    - LUA=luajit     # latest stable version (2.0.4)
+    - LUA=luajit2.0  # current head of 2.0 branch
+    - LUA=luajit2.1  # current head of 2.1 branch
+
+branches:
+  only:
+    - master
+
+before_install:
+  - source .travis/setenv_lua.sh
+  - pip install --user cpp-coveralls
+  - luarocks install luacov-coveralls
+  - luarocks install lzmq
+  - luarocks install lunitx
+  - if [ $LUA = "lua5.1" ]; then
+      luarocks install bit32;
+    fi
+
+install:
+  - luarocks make rockspecs/bgcrypto-sha-scm-0.rockspec CFLAGS="-O2 -fPIC -ftest-coverage -fprofile-arcs" LIBFLAG="-shared --coverage"
+  - luarocks make rockspecs/bgcrypto-hmac-scm-0.rockspec
+  - luarocks make rockspecs/bgcrypto-pbkdf2-scm-0.rockspec
+  - luarocks make rockspecs/bgcrypto-lmd5-scm-0.rockspec
+
+script:
+  - cd test
+  - lua -lluacov test_sha.lua
+  - lua -lluacov test_pbkdf2.lua
+  - lunit.sh utest_sha.lua
+
+after_success:
+  - coveralls -b .. -r .. -i ./src --dump c.report.json
+  - luacov-coveralls -j c.report.json -v
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
