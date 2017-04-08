@@ -1,0 +1,12 @@
+Source: lua-bgcrypto
+Section: interpreters
+Priority: optional
+Maintainer: Gerik Bonaert <dev@adaxisoft.be>
+Build-Depends: debhelper (>= 9), pkg-config
+Standards-Version: 3.9.5
+Homepage: https://github.com/moteus/lua-bgcrypto-sha
+
+Package: lua-bgcrypto
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Cryptographic functions for Lua

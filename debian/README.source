@@ -1,0 +1,9 @@
+lua-bgcrypto for Debian
+-----------------------
+
+The source package is only installable manually or via luarocks.
+In order to package this for debian I created a makefile to mimic what
+the luarocks does.
+
+ -- Gerik Bonaert <dev@adaxisoft.be>  Fri, 07 Apr 2017 22:23:46 +0200
+
